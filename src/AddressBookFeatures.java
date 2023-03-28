@@ -1,16 +1,17 @@
 
 
-import com.opencsv.CSVReader;
-import com.opencsv.CSVReaderBuilder;
-import com.opencsv.CSVWriter;
-import com.opencsv.bean.StatefulBeanToCsv;
-import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
+
 public class AddressBookFeatures {
     List<ContactStoring> info = new LinkedList<>();
 
@@ -229,44 +230,35 @@ public class AddressBookFeatures {
 
     }
 
-    public void writeDataToCSVFile() {
+    public void writeDataToJSONFile() {
 
-        try (Writer writer = Files.newBufferedWriter(Paths.get("C:\\Users\\asaha\\Desktop\\Java_Fellowship_242\\Address_Book_CSV_And_JSON\\src\\main\\resources\\csvOutput.csv"))) {
-            StatefulBeanToCsvBuilder<ContactStoring> contactsStatefulBeanToCsvBuilder = new StatefulBeanToCsvBuilder<>(writer);
-            StatefulBeanToCsv<ContactStoring> contactStatefulBeanToCsv = contactsStatefulBeanToCsvBuilder.build();
-            contactStatefulBeanToCsv.write(getContact());
-            System.out.println("---File Stored In CSV Format---");
-
-        } catch (Exception e) {
+        try (Writer writer = Files.newBufferedWriter(Paths.get("C:\\Users\\asaha\\Desktop\\Java_Fellowship_242\\Address_Book_CSV_And_JSON\\src\\main\\resources\\jsonOutput.json"))) {
+            Gson gson = new Gson();
+            String json = gson.toJson(multipleAddressBook);
+            writer.write(json);
+            System.out.println("---Contacts Added To JSON File---");
+        }
+        catch (Exception e){
             e.printStackTrace();
-
-
         }
     }
 
-    public void readFromCSVFile() {
-        try (Reader reader = Files.newBufferedReader(Paths.get("C:\\Users\\asaha\\Desktop\\Java_Fellowship_242\\Address_Book_CSV_And_JSON\\src\\main\\resources\\csvOutput.csv"));
+    public void readFromJSONFile() {
 
-             CSVReader csvReader = new CSVReaderBuilder(reader).withSkipLines(1).build()) {
-            String[] record;
-            while ((record = csvReader.readNext()) != null) {
-                System.out.println("First name : " + record[2]);
-                System.out.println("Last name : " + record[3]);
-                System.out.println("Email : " + record[1]);
-                System.out.println("Phone number : " + record[4]);
-                System.out.println("City : " + record[0]);
-                System.out.println("State : " + record[5]);
-                System.out.println("Zip : " + record[6]);
-                System.out.println("----------------------------------------");
+        try (Reader reader = Files.newBufferedReader(Paths.get("C:\\Users\\asaha\\Desktop\\Java_Fellowship_242\\Address_Book_CSV_And_JSON\\src\\main\\resources\\jsonOutput.json"))) {
+            JsonParser jsonParser = new JsonParser();
+            Object obj =  jsonParser.parse(reader);
+            JsonObject empOBJ = (JsonObject)obj;
+            for (Map.Entry<String, JsonElement> str: empOBJ.entrySet()) {
+                System.out.println(str.getKey()+"\t"+str.getValue()+"\n");
+                System.out.println();
             }
-            System.out.println("Successfully read from CSV file");
             System.out.println();
-
-        } catch (Exception e) {
+        }
+        catch (Exception e){
             e.printStackTrace();
         }
     }
-
 
 
     public void displayContacts() {
@@ -276,5 +268,4 @@ public class AddressBookFeatures {
         }
 
     }
-
 }

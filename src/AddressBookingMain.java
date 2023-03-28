@@ -145,14 +145,14 @@ public class AddressBookingMain {
 
                 case 9:{
 
-                    contact.writeDataToCSVFile();
+                    contact.writeDataToJSONFile();
                     break;
 
                 }
-
+                JSON
                 case 10:{
 
-                    contact.readFromCSVFile();
+                    contact.readFromJSONFile();
                     break;
 
                 }
